@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page title</title>
+    <!-- awesome fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing:border-box;
+        }
+        
+        body {
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap:20px;
+            width:100vw;
+            height: 100vh;
+        }
+        
+        /* utility */
+        
+        .bd {
+            border:1px solid #415656;
+        }
+        
+        .green {
+            background: #2afaa8ce;
+        }
+        
+        .red {
+            background: #ff2b4ad3;
+        }
+        
+        /* utility */
+        
+        .container {
+            width: 345px;
+            height: 345px;
+            border-radius:4px;
+            display: grid;
+            border: 2px dashed white;
+            outline: 1px solid black;
+            outline-offset: -1.45px;
+            position :relative;
+            background: linear-gradient(135deg, #030303, #0b0b0b);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .body {
+            height:15px;
+            width:15px;
+            border: 1.5px solid #032800;
+            /* outline: 0.7px dashed black;
+            outline-offset: -0.9px; */
+            border-left: none;
+            border-radius: 5px;
+            background: #739c2e;
+            position:absolute;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 5;
+        }
+        
+        .snake {
+            position: relative;
+            height: 15px;
+            width: 15px;
+            overflow: visible;
+            z-index: 6;
+        }
+
+        .snake::after {
+            content: "";
+            position: absolute;
+            top: -2.5px;
+            left: 1.5px;
+            width: 20px;
+            height: 20px;
+            background: url('snakeHead.png') no-repeat center;
+            background-size: 20px 20px;
+        }
+        
+        .tail {
+            height:15px;
+            width:15px;
+            border-radius: 100% 20% 20% 100% / 50% 20% 20% 50%;
+            position:absolute;
+            border: 1.3px solid #043a00;
+            outline: 0.7px dashed black;
+            outline-offset: -0.9px;
+            border-right: 0.9px dashed #00400b;
+            background: #739c2e;
+            background-size: 15px;
+            z-index: 5;
+        }
+        
+        .food {
+            height:15px;
+            width:15px;
+            font-size: 12.5px;
+            background: url('apple.png') no-repeat center;
+            background-size: 15px;
+            position:absolute;
+        }
+        
+      
+        
+.controls {
+  width: 210px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-radius: 50%;
+  background: #fbca1f;
+  border: 1px solid black;
+  box-shadow: 0.15em 0.15em;
+}
+
+.updown,
+.rightleft {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.updown {
+  left: 30%;
+  flex-direction: column;
+  height: 100%;
+  width:40%;
+}
+
+.rightleft {
+  top: 30%;
+  flex-direction: row;
+  height:40%;
+  width: 100%;
+}
+
+.fa-solid,
+.fa-regular {
+  margin: 0;
+  font-size: 1.6em;
+  padding: 1.15rem 1.3rem;
+  color: black; /* Color from the button reference */
+  font-weight: 800;
+  background: #fbca1f;
+      border: 1px solid black;
+      border-radius: 0.4em;
+      cursor: pointer;
+      display: inline-block;
+      box-shadow: 0.1em 0.1em;
+}
+
+.fa-circle-play{
+    border-radius: 48%;
+    padding: 17px;
+}
+.fa-angle-up{
+    border-radius:40% 40% 10% 10%;
+}
+.fa-angle-down{
+    border-radius:10% 10% 40% 40%;
+}
+.fa-angle-left{
+    border-radius:40% 10% 10% 40% ;
+}
+.fa-angle-right{
+    border-radius:10% 40% 40% 10% ;
+}
+
+
+.fa-solid:hover,
+.fa-regular:hover {
+  transform: translate(-0.05em, -0.05em);
+  box-shadow: 0.15em 0.15em;
+}
+
+.fa-solid:active,
+.fa-regular:active {
+  transform: translate(0.05em, 0.05em);
+  box-shadow: 0.05em 0.05em;
+}
+
+       
+        .updown {
+            z-index:1;
+        }
+        
+        .randomfood {
+      background: #fbca1f;
+      font-family: courier;
+      padding: 0.5em 1.3em;
+      font-weight: 900;
+      font-size: 17px;
+      border: 3px solid black;
+      border-radius: 0.4em;
+      box-shadow: 0.1em 0.1em;
+      cursor: pointer;
+      display: inline-block;
+        }
+        
+        .randomfood:hover {
+            transform: translate(-0.05em, -0.05em);
+            box-shadow: 0.15em 0.15em;
+        }
+        
+        .randomfood:active {
+  transform: translate(0.05em, 0.05em);
+  box-shadow: 0.05em 0.05em;
+}
+
+        
+    .score-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fbca1f;
+      font-family: courier;
+      padding: 0.3em 1.3em;
+      font-weight: 800;
+      font-size: 17px;
+      border: 3px solid black;
+      border-radius: 0.4em;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .score-label {
+      font-weight: 900;
+      font-size: 18px;
+      margin-bottom: 0.25em;
+    }
+
+    .score-divider {
+      background: black;
+      width: 100%;
+      height: 4%;
+      border-radius: 10px;
+      
+    }
+
+    .score {
+      font-size: 18px;
+      padding-top: 5px;
+      font-weight: 900;
+    }
+        
+        
+        
+        .restart-button {
+  background: #fbca1f;
+  font-family: courier;
+  padding: 0.5em 1.2em;
+  font-weight: 900;
+  font-size: 17px;
+  border: 3px solid black;
+  border-radius: 0.4em;
+  box-shadow: 0.1em 0.1em;
+  cursor: pointer;
+  user-select: none;
+        }
+
+        .restart-button:hover {
+            transform: translate(-0.05em, -0.05em);
+            box-shadow: 0.15em 0.15em;
+        }
+        
+        .restart-button:active {
+  transform: translate(0.05em, 0.05em);
+  box-shadow: 0.05em 0.05em;
+}
+
+
+.top-icons {
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    z-index: 9;
+}
+
+.top-icons #music-icon,
+.top-icons #sound-icon {
+    font-size: 16px;
+    cursor: pointer;
+    padding: 14px; 
+ 
+}
+
+.top-icons .sound-icons {
+    display: flex;
+}
+
+.top-icons .sound-icons i {
+    font-size: 16px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    /* animation: zoomIn 0.5s */
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+   
+    transform: scale(0.5) translate(-50%, -50%);
+  }
+  to {
+    opacity: 1;
+    
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+.modal-content {
+    background-color: #1e1e1e;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: 0% 0%;
+    padding: 20px;
+    border: 2px solid #fbca1f;
+    border-radius: 10px;
+    width: 300px; /* Adjust the width to your preference */
+    height:180px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    color: white;
+    text-align: center;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    animation: zoomIn 0.5s;
+}
+
+.modal-content > .close {
+    color: #fbca1f;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-content > h2 {
+    color: #fbca1f;
+    margin-bottom: 13px;
+    
+}
+
+.modal-content > p {
+    margin-bottom: 15px;
+    font-family: courier;
+}
+
+.modal-content > button {
+    background-color: #fbca1f;
+    color: #1e1e1e;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.modal-content > button:hover {
+    background-color: #ffdb58;
+}
+
+
+        
+    </style>
+</head>
+<body>
+    
+<div id="gameOverModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Game Over</h2>
+        <p>Your final score is <span id="finalScore">0</span></p>
+           
+    <button class="restart-button">Restart Game</button>
+
+    </div>
+</div>
+
+
+
+    
+<div class="score-container">
+  <div class="score-label">Score</div>
+  <div class="score-divider"></div>
+  <div class="score">0</div>
+</div>
+    
+    <div class="container">
+        <span class="snake"></span>
+        <span class="tail"></span>
+        <span class="food"></span>
+    </div>
+   
+   
+    <button class="restart-button" id="restart-button">Restart Game</button>
+
+ 
+    
+    <div class="controls">
+        <div class="updown">
+            <i class="fa-solid fa-angle-up" ></i>
+            <i class="fa-regular fa-circle-play"></i>
+            <i class="fa-solid fa-angle-down" ></i>
+        </div>
+        <div class="rightleft">
+            <i class="fa-solid fa-angle-left" ></i>
+            <i class="fa-solid fa-angle-right" ></i>
+        </div>
+    </div>
+    
+
+<div class="top-icons">
+    <i class="fa-solid fa-music " id="music-icon"></i>
+    <div class="sound-icons ">
+        <i class="fa-solid fa-volume-off " id="sound-icon"></i>
+    </div>
+</div>
+
+
+
+    <script>
+        // JavaScript code here...
+        
+        
+        
+                document.addEventListener('DOMContentLoaded', 
+    function () {
+    
+    let food = document.querySelector(".food");
+    let snake = document.querySelector(".snake");
+    let tail = document.querySelector(".tail");
+    let start = 0;
+    let end = (345 - 15);
+    let controls = document.querySelectorAll(".fa-solid");
+    let score = 0;
+    let scoreValue = document.querySelector(".score");
+    let container = document.querySelector(".container");
+    let intervalIdRight;
+    let intervalIdLeft;
+    let intervalIdUp;
+    let intervalIdDown;
+    let speed = 10;
+    let delay = 11 * speed;
+    var body = [];
+    let game = '';
+    let restarting = false;
+    
+    let musicIcon =
+     document.getElementById('music-icon'); 
+    let musicOn = false; 
+    let musicAudio = 
+    new Audio('music_snake_game.mp3');
+    
+    musicIcon.addEventListener('click', toggleMusic);
+
+    let soundIcon =
+     document.getElementById('sound-icon'); 
+    let soundOn = false; 
+    let foodEatenAudio = new
+     Audio('food-eaten-sound.mp3');
+    
+    soundIcon.addEventListener('click', toggleSound);
+
+
+
+    
+    
+
+    function getRandomMultipleOf1() {
+        const min = start;
+        const max = end;
+        const step = 1;
+        return Math.floor(Math.random() * ((max - min) / step + 1)) * step;
+    }
+
+
+    // RANDOM FOOD GENERATOR
+    function getRandomFood() {
+        var randomNum1 = getRandomMultipleOf1();
+        var randomNum2 = getRandomMultipleOf1();
+        food.style.top = randomNum1 + 'px';
+        food.style.left = `${randomNum2}px`;
+    }
+
+    
+    
+   
+
+    function Adjust(body1, body0) {
+        setTimeout(() => {
+            body1.style.left = body0.style.left;
+            body1.style.top = body0.style.top;
+            body1.style.transform =
+             body0.style.transform;
+            body1.style.opacity = '1';
+        }, body.length * delay)
+    }
+
+
+    function increaseBody() {
+        newSpan = document.createElement('span');
+        newSpan.className = 'body';
+        container.insertBefore(newSpan, container.firstChild);
+        body.push(newSpan);
+
+        if (body.length >= 2)
+            Adjust(body[body.length - 1], body[body.length - 2]);
+        else
+            Adjust(body[body.length - 1], snake);
+    }
+
+    // to generate instant coordinates
+    function currentVal(obj, coordinate) {
+        let computedStyles = window.getComputedStyle(obj);
+        let current = computedStyles.getPropertyValue(coordinate);
+        current = Math.floor(Number(current.slice(-10, -2)));
+        return current;
+    }
+
+    // check food and snake coordinates
+    function isfoodeaten() {
+    
+        let snakeLeft = currentVal(snake, 'left');
+        let snakeTop = currentVal(snake, 'top');
+        let foodLeft = currentVal(food, 'left');
+        let foodTop = currentVal(food, 'top');
+
+        if (((foodTop - 7) <= snakeTop) &&
+            ((foodTop + 8) >= snakeTop) &&
+            ((foodLeft - 7) <= snakeLeft) &&
+            ((foodLeft + 8) >= snakeLeft)) {
+            getRandomFood();
+            increaseBody();
+            ++score;
+            scoreValue.innerHTML = score;
+            foodEatenSound();
+        }
+
+        if ((snakeTop < start) ||
+            (snakeTop > end) ||
+            (snakeLeft < start) ||
+            (snakeLeft > end)) {
+            
+            game = 'stop';
+            
+            stop();
+            displayGameOverModal();
+        }
+
+        for (let x in body) {
+            if (x == 0 || x == 1 || x == 2) {
+                continue;
+            };
+            let bodyLeft = currentVal(body[x], 'left');
+            let bodyTop = currentVal(body[x], 'top');
+            if (((bodyTop - 8) <= snakeTop) &&
+                ((bodyTop + 8) >= snakeTop) &&
+                ((bodyLeft - 8) <= snakeLeft) &&
+                ((bodyLeft + 8) >= snakeLeft)) {
+                
+                game = 'stop';
+                 
+                stop();
+                displayGameOverModal();
+            }
+        }
+    }
+
+    let intervalIdEat = setInterval(function () {
+            if (game != 'stop')
+            {isfoodeaten();}
+            }, 100);
+
+
+
+
+
+    // to plus 1 pixel to present value
+    function body1pxL(obj, coordinate) {
+        if (game === 'stop' || !obj || restarting) {
+            return;
+        };
+        obj.style.left = `${coordinate}px`;
+    }
+
+    function body1pxT(obj, coordinate) {
+        if (game === 'stop' || !obj || restarting) {
+            return;
+        };
+        obj.style.top = `${coordinate}px`;
+    }
+
+
+
+
+    // to apply new coordinate after 150ms
+    function bodyMoveL(coordinate) {
+        for (let i = 0; i < body.length; i++) {
+        
+            setTimeout(() => body1pxL(body[i], coordinate), (i + 1) * delay);
+        }
+     
+        setTimeout(() => body1pxL(tail, coordinate), (body.length + 1) * delay);
+    }
+
+    function bodyMoveT(coordinate) {
+        for (let i = 0; i < body.length; i++) {
+            
+            setTimeout(() => body1pxT(body[i], coordinate), (i + 1) * delay);
+        }
+    
+        setTimeout(() => body1pxT(tail, coordinate), (body.length + 1) * delay);
+    }
+
+
+    // to plus 1 pixel to present left value
+    function plus1pxleft(obj, coordinate) {
+        if (game === 'stop') {
+            return;
+        };
+        obj.style.left = `${coordinate}px`;
+        bodyMoveL(coordinate);
+    }
+
+
+    // to plus 1 pixel to present top value
+    function plus1pxtop(obj, coordinate) {
+        if (game === 'stop') {
+            return;
+        };
+        obj.style.top = `${coordinate}px`;
+        bodyMoveT(coordinate);
+    }
+
+
+
+
+    // to stop the working of each button
+    function stop() {
+        clearInterval(intervalIdRight);
+        clearInterval(intervalIdLeft);
+        clearInterval(intervalIdUp);
+        clearInterval(intervalIdDown);
+    }
+
+
+
+
+
+
+    // to rotate snake's head, tail, and body
+    function rotate(deg) {
+        if (game === 'stop'|| restarting) {
+            return;
+        };
+        snake.style.transform = `rotate(${deg}deg)`;
+
+        setTimeout(function () {
+            if (game != 'stop' || restarting) {
+                tail.style.transform = `rotate(${deg}deg)`;
+            }
+        }, (body.length + 1) * delay);
+
+        for (let i = 0; i < body.length; i++) {
+            setTimeout(function () {
+                if (game != 'stop'|| restarting) {
+                    body[i].style.transform = `rotate(${deg}deg)`;
+                }
+            }, (i + 1) * delay)
+        }
+    }
+
+
+
+
+
+
+
+
+    // control buttons onclick function
+    function goleft() {
+        leftval = currentVal(snake, 'left');
+        intervalIdLeft = setInterval(() => plus1pxleft(snake, leftval--), speed);
+        rotate(180);
+    }
+
+    function goup() {
+        topval = currentVal(snake, 'top');
+        intervalIdUp = setInterval(() => plus1pxtop(snake, topval--), speed);
+        rotate(-90);
+    }
+
+    function godown() {
+        topval = currentVal(snake, 'top');
+        intervalIdDown = setInterval(() => plus1pxtop(snake, topval++), speed);
+        rotate(90);
+    }
+
+    function goright() {
+        leftval = currentVal(snake, 'left');
+        intervalIdRight = setInterval(() => plus1pxleft(snake, leftval++), speed);
+        rotate(0);
+    }
+
+
+
+
+
+
+
+    // Event Listeners for control buttons
+    document.querySelector(".fa-solid.fa-angle-up").addEventListener("click", function () {
+        stop();
+        goup();
+    });
+
+    document.querySelector(".fa-regular.fa-circle-play").addEventListener("click", function () {
+  if (game != 'stop') {
+   getRandomFood();
+  }
+});
+
+
+    document.querySelector(".fa-solid.fa-angle-down").addEventListener("click", function () {
+        stop();
+        godown();
+    });
+
+    document.querySelector(".fa-solid.fa-angle-left").addEventListener("click", function () {
+        stop();
+        goleft();
+    });
+
+    document.querySelector(".fa-solid.fa-angle-right").addEventListener("click", function () {
+        stop();
+        goright();
+    });
+    
+    
+   
+
+    // Initial setup
+    getRandomFood();
+    
+    
+    
+    
+    
+    function restartGame() {
+            stop();
+            
+            restarting = true;
+            
+            setTimeout(() => {
+        restarting = false;
+    }, delay * (body.length + 1));
+
+            // Reset game variables
+            score = 0;
+            scoreValue.innerHTML = score;
+            game = '';
+
+            // Remove existing body segments
+            body.forEach(segment => segment.remove());
+            body = [];
+
+            // Reset snake position
+            snake.style.left = '0';
+            snake.style.top = '0';
+            snake.style.transform = 'rotate(0deg)';
+
+            // Reset tail position
+            setTimeout(function () {
+                tail.style.left = '0';
+        }, delay);
+            
+            setTimeout(function () {
+                tail.style.top = '0';
+        }, delay);
+
+            tail.style.transform = 'rotate(0deg)';
+
+            // Reset food position
+            getRandomFood();
+
+            // Start the game again if needed
+            // Example: goup();
+        }
+        
+        document.querySelector(".restart-button").addEventListener("click", function () {
+        restartGame();
+        closeGameOverModal();
+    }); 
+    
+document.querySelector("#restart-button").addEventListener("click", function () {
+        restartGame();
+        
+    });     
+    
+    
+    
+    
+    
+    
+    function toggleMusic() {
+        musicOn = !musicOn;
+        if (musicOn) 
+         musicAudio.play();
+        else 
+         musicAudio.pause();
+        updateMusicIcon();
+    }
+
+
+    function updateMusicIcon() {
+        musicIcon.classList.remove('fa-music');
+        musicIcon.classList.toggle('fa-pause',
+             musicOn);
+        musicIcon.classList.toggle('fa-play', 
+            !musicOn);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    function toggleSound() {
+        soundOn = !soundOn;
+        
+        soundIcon.classList.toggle('fa-volume-up',
+             soundOn);
+        soundIcon.classList.toggle('fa-volume-off', 
+            !soundOn);
+    }
+
+    
+    
+    
+function foodEatenSound() {
+    if (soundOn) {
+        foodEatenAudio.play();
+    }
+}
+
+
+
+
+
+
+document.querySelector(".close").addEventListener("click", function () {
+        closeGameOverModal();
+    }); 
+    
+
+function displayGameOverModal() {
+    let finalScoreDisplay = document.getElementById('finalScore');
+    finalScoreDisplay.innerHTML = score;
+    let modal = document.getElementById('gameOverModal');
+    modal.style.display = 'block';
+}
+
+function closeGameOverModal() {
+    let modal = document.getElementById('gameOverModal');
+    modal.style.display = 'none';
+}
+    
+
+    
+    
+});
+
+        
+        
+    </script>
+</body>
+</html>
